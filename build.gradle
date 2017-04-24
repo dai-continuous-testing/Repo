@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+sourceSets.main.resources.srcDir 'src'
+
+repositories {
+         
+     maven { url "https://maven.java.net/content/repositories/snapshots/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+     mavenCentral()
+}
+
+
+dependencies {
+	compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '2.41.0' 
+}
+
