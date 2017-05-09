@@ -42,6 +42,12 @@ public class Repository {
 			throw new RuntimeException("Cannot recongnise By method: " + prop.getProperty("by") +", supported methods are xpath, id, class, name, link, partialLink, tag and css");
 		}
 	}
+	public String zone(String key){
+		return new Props(prop(key)).context;
+	}
+	public String element(String key){
+		return new Props(prop(key)).element;
+	}
 
 	public Properties prop(String key) {
 		File repoDir = new File(folderName);
@@ -89,3 +95,29 @@ public class Repository {
 		}
 	}
 }
+class Props{
+	public final String context;
+	public final String element;
+	
+	public Props(Properties prop){
+		String _context = "NATIVE";
+		if(prop.containsKey("context") && prop.getProperty("context").toLowerCase().contains("web")){
+			_context = "WEB";
+		}
+		context = _context;
+		String by = prop.getProperty("by");
+		String expression = prop.getProperty("expression");
+		if("class".equals(by)){
+			element = "xpath=" + "//*[@class='" + expression + "']";
+		} else if("name".equals(by)){
+				element = "xpath=" + "//*[@name='" + expression + "']";
+		} else if("link".equals(by)){
+			element = "text=" + expression;
+		} else if("partialLink".equals(by)){
+			element = "partial_text=" + expression;
+		} else {
+			element = by + "=" + expression;
+		}
+	}
+}
+
