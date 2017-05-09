@@ -19,25 +19,7 @@ public class Repository {
 	}
 	
 	public By obj(String key){
-		File repoDir = new File(folderName);
-		if(!repoDir.exists()){
-			repoDir = new File(System.getProperty("user.dir"), folderName);
-			if(!repoDir.exists()){
-				throw new RuntimeException("Cannot allocate repository directory: " + folderName + ", open a folder name " + folderName + " in your java project root");			
-			}
-		}
-		File propFile = new File(repoDir, key + ".obj");
-		Properties prop = new Properties();
-		try {
-			FileReader fr = new FileReader(propFile);
-			prop.load(fr);
-			fr.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		if(!prop.containsKey("by") || !prop.containsKey("expression")){
-			throw new RuntimeException("by or expression properties were not set");
-		}
+		Properties prop = prop(key);
 		String expression = prop.getProperty("expression");
 		switch(prop.getProperty("by")){
 		case "xpath":
@@ -59,6 +41,29 @@ public class Repository {
 		default:
 			throw new RuntimeException("Cannot recongnise By method: " + prop.getProperty("by") +", supported methods are xpath, id, class, name, link, partialLink, tag and css");
 		}
+	}
+
+	public Properties prop(String key) {
+		File repoDir = new File(folderName);
+		if(!repoDir.exists()){
+			repoDir = new File(System.getProperty("user.dir"), folderName);
+			if(!repoDir.exists()){
+				throw new RuntimeException("Cannot allocate repository directory: " + folderName + ", open a folder name " + folderName + " in your java project root");			
+			}
+		}
+		File propFile = new File(repoDir, key + ".obj");
+		Properties prop = new Properties();
+		try {
+			FileReader fr = new FileReader(propFile);
+			prop.load(fr);
+			fr.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		if(!prop.containsKey("by") || !prop.containsKey("expression")){
+			throw new RuntimeException("by or expression properties were not set");
+		}
+		return prop;
 	}
 
 	public void verifyPage(WebDriver driver, String pageName) {
@@ -83,5 +88,4 @@ public class Repository {
 			driver.findElement(obj(f.getName().substring(0, f.getName().length() - 4)));
 		}
 	}
-
 }
