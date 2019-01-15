@@ -14,7 +14,30 @@ public class Repository {
 	public Repository(String folderName){
 		this.folderName = folderName;
 		if(folderName == null){
-			this.folderName = "repo";
+			File repoPropFile = new File("repo.properties");
+			if(repoPropFile.exists()){
+				Properties prop = new Properties();
+				FileReader fr = null;
+				try {
+					fr = new FileReader(repoPropFile);
+					prop.load(fr);
+					fr.close();
+					this.folderName = prop.getProperty("repo.folder", "repo");
+				} catch (Exception e){
+					e.printStackTrace();;
+				} finally {
+					if(fr != null){
+						try {
+							fr.close();
+						} catch (IOException ignore){
+						}
+					}
+
+				}
+
+			} else {
+				this.folderName = "repo";
+			}
 		}
 	}
 	
